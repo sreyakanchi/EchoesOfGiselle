@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Echoes of Giselle</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<audio id="bg-audio" src="./assets/og_key.mp3" loop preload="auto"></audio>
+
+<div id="loading">
+  <div id="loading-text">Winding the box</div>
+  <div id="loading-bar-wrap"><div id="loading-bar"></div></div>
+</div>
+<div id="cursor"></div>
+<div class="grain"></div>
+<div id="canvas-container"></div>
+<div id="widget-backdrop"></div>
+<div id="explore-hint">pan around and explore...</div>
+<div class="corner-ornament tl"></div>
+<div class="corner-ornament tr"></div>
+<div class="corner-ornament bl"></div>
+<div class="corner-ornament br"></div>
+<script type="importmap">
+{
+  "imports": {
+    "three":          "https://cdn.jsdelivr.net/npm/three@0.148.0/build/three.module.js",
+    "three/addons/":  "https://cdn.jsdelivr.net/npm/three@0.148.0/examples/jsm/",
+    "cannon-es":      "https://cdn.jsdelivr.net/npm/cannon-es@0.20.0/dist/cannon-es.js"
+  }
+}
+</script>
+<script type="module" src="script.js"></script>
+</body>
+</html>

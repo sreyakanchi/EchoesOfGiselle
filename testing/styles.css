@@ -1,0 +1,123 @@
+* { margin: 0; padding: 0; box-sizing: border-box; }
+  
+  body {
+    background: #0a0806;
+    overflow: hidden;
+    font-family: 'Palatino Linotype', Palatino, serif;
+    cursor: none;
+  }
+
+  #canvas-container {
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+  }
+
+  canvas { display: block; position: relative; z-index: 20; }
+
+  /* ── Loading Screen ───────────────────────────────────────────────────── */
+  #loading {
+    position: fixed; inset: 0; background: #000; z-index: 100;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    transition: opacity 1.5s ease;
+  }
+  #loading.fade-out { opacity: 0; pointer-events: none; }
+  #loading-text {
+    font-family: 'Palatino Linotype', Palatino, serif;
+    color: rgba(232,220,200,0.6);
+    font-size: 0.7rem;
+    letter-spacing: 0.55em;
+    text-transform: uppercase;
+    animation: breathe 2.2s ease-in-out infinite;
+  }
+  #loading-bar-wrap {
+    margin-top: 1.8rem; width: 140px; height: 1px;
+    background: rgba(232,220,200,0.12);
+  }
+  #loading-bar { height: 1px; width: 0%; background: rgba(232,220,200,0.65); transition: width 0.3s ease; }
+  @keyframes breathe { 0%,100% { opacity: 0.3; } 50% { opacity: 1; } }
+
+
+  .corner-ornament {
+    position: fixed;
+    width: 60px;
+    height: 60px;
+    opacity: 0.2;
+  }
+  .corner-ornament.tl { top: 16px; left: 16px; border-top: 1px solid #8b6535; border-left: 1px solid #8b6535; }
+  .corner-ornament.tr { top: 16px; right: 16px; border-top: 1px solid #8b6535; border-right: 1px solid #8b6535; }
+  .corner-ornament.bl { bottom: 90px; left: 16px; border-bottom: 1px solid #8b6535; border-left: 1px solid #8b6535; }
+  .corner-ornament.br { bottom: 90px; right: 16px; border-bottom: 1px solid #8b6535; border-right: 1px solid #8b6535; }
+
+  #cursor {
+    position: fixed;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(180, 130, 60, 0.6);
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: transform 0.1s ease;
+    mix-blend-mode: screen;
+  }
+
+  .grain {
+    position: fixed;
+    inset: -50%;
+    width: 200%;
+    height: 200%;
+    opacity: 0.045;
+    pointer-events: none;
+    z-index: 6;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    animation: grain 0.8s steps(1) infinite;
+  }
+
+  @keyframes grain {
+    0%,100%{transform:translate(0,0)}
+    10%{transform:translate(-2%,-2%)}
+    20%{transform:translate(2%,2%)}
+    30%{transform:translate(-1%,1%)}
+    40%{transform:translate(1%,-1%)}
+    50%{transform:translate(-2%,2%)}
+    60%{transform:translate(2%,-2%)}
+    70%{transform:translate(-1%,-1%)}
+    80%{transform:translate(1%,1%)}
+    90%{transform:translate(-2%,1%)}
+  }
+
+#widget-backdrop {
+  position: fixed;
+  bottom: calc(20px + 60px);
+  left: 50%;
+  transform: translateX(-50%);
+  width: 420px;
+  height: 320px;
+  background: radial-gradient(ellipse at center,
+    rgba(0,0,0,0.55) 0%,
+    transparent 75%);
+  pointer-events: none;
+  z-index: 19;
+}
+
+#explore-hint {
+  position: fixed;
+  top: 50%;
+  bottom: auto;
+  transform: translate(-50%, -50%);
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: clamp(1rem, 2vw, 1.5rem);
+  letter-spacing: 0.25em;
+  color: rgba(232, 220, 200, 0.75);
+  pointer-events: none;
+  z-index: 21;
+  opacity: 0;
+  transition: opacity 1.2s ease;
+  white-space: nowrap;
+}
+
