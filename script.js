@@ -432,7 +432,7 @@ for (let i = 0; i < 18; i++) {
 // ─── Background Trees (GLB instances) ────────────────────────────────────────
 // 22 trees placed in a ring, radius 10–16, loaded from tree.glb
 const treeLoader = new GLTFLoader();
-treeLoader.load('./assets/tree.glb', (gltf) => {
+treeLoader.load('./testing/assets/tree.glb', (gltf) => {
   const treeTemplate = gltf.scene;
 
   // Pre-normalise the template: sit on ground, enable shadows
@@ -511,7 +511,7 @@ treeLoader.load('./assets/tree.glb', (gltf) => {
 // ─── Music Box GLB — animated model for intro sequence ───────────────────────
 const musicBoxLoader = new GLTFLoader();
 musicBoxLoader.load(
-  './assets/music_box_anim.glb',
+  './testing/assets/music_box_anim.glb',
   (gltf) => {
     const model = gltf.scene;
     scene.add(model);
@@ -633,7 +633,7 @@ musicBoxLoader.load(
 // Not added to scene until Phase 1 ends — see animate loop
 const dancerLoader = new GLTFLoader();
 dancerLoader.load(
-  './assets/doll_draft.glb',
+  './testing/assets/doll_draft.glb',
   (gltf) => {
     dancer = gltf.scene;
     dancer.traverse(child => {
@@ -678,7 +678,7 @@ const tombPositions  = []; // [x, z] of placed tombs for spacing check
 
 const tombLoader = new GLTFLoader();
 tombLoader.load(
-  './assets/tomb.glb',
+  './testing/assets/tomb.glb',
   (gltf) => {
     const template = gltf.scene;
 
