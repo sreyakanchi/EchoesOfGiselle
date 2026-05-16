@@ -18,10 +18,15 @@
       --red:        #7a1a1a;
     }
 
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
     html, body {
-      width: 100%; height: 100%;
+      width: 100%;
+      height: 100%;
       overflow: hidden;
       background: var(--black);
     }
@@ -29,40 +34,112 @@
     canvas {
       display: block;
       position: fixed;
-      top: 0; left: 0;
+      inset: 0;
       width: 100% !important;
       height: 100% !important;
     }
 
     #ui {
       position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
+      inset: 0;
       pointer-events: none;
       z-index: 10;
       font-family: 'Cormorant Garamond', serif;
       color: var(--white-mist);
     }
 
-    /* ── Shared text animation classes ───────────────────── */
+    /* ───────────────── ENTER SCREEN ───────────────── */
+
+    #enter-screen {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      background:
+        radial-gradient(circle at center, rgba(40,20,20,0.55), rgba(5,3,3,0.96)),
+        #000;
+
+      cursor: pointer;
+      transition: opacity 1.2s ease;
+    }
+
+    #enter-screen.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    #enter-content {
+      text-align: center;
+      transform: translateY(-2%);
+    }
+
+    #enter-title {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(2.6rem, 6vw, 5rem);
+      letter-spacing: 0.14em;
+      color: var(--gold-pale);
+
+      opacity: 0;
+      transform: translateY(24px);
+
+      animation: enterFadeUp 1.6s ease forwards;
+      text-shadow:
+        0 0 18px rgba(201,168,76,0.15),
+        0 0 40px rgba(201,168,76,0.08);
+    }
+
+    #enter-subtitle {
+      margin-top: 1.4rem;
+
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 1.15rem;
+      letter-spacing: 0.28em;
+      text-transform: lowercase;
+
+      color: rgba(255,255,255,0.72);
+
+      opacity: 0;
+      transform: translateY(16px);
+
+      animation:
+        enterFadeUp 1.6s ease forwards,
+        breathe 2.8s ease-in-out infinite;
+
+      animation-delay:
+        0.25s,
+        1.6s;
+    }
+
+    @keyframes enterFadeUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes breathe {
+      0%,100% { opacity: 0.35; }
+      50%     { opacity: 0.95; }
+    }
+
+    /* ───────────────── Shared text animations ───────────────── */
+
     .fade-up {
       opacity: 0;
       transform: translateY(18px);
-      transition: opacity 0.5s ease, transform 0.5s ease;
+      transition:
+        opacity 0.5s ease,
+        transform 0.5s ease;
     }
+
     .fade-up.visible {
       opacity: 1;
       transform: translateY(0);
-    }
-
-    .fade-down {
-      opacity: 1;
-      transform: translateY(0);
-      transition: opacity 0.5s ease, transform 0.5s ease;
-    }
-    .fade-down.hidden {
-      opacity: 0;
-      transform: translateY(18px);
     }
 
     #clause-text {
@@ -70,16 +147,22 @@
       bottom: 35%;
       left: 50%;
       transform: translateX(-50%);
+
       width: 70%;
       text-align: center;
+
       font-family: 'Cormorant Garamond', serif;
       font-style: italic;
       font-size: clamp(1.6rem, 3vw, 2.4rem);
-      color: rgba(232, 220, 200, 0.88);
+
+      color: rgba(232,220,200,0.88);
+
       letter-spacing: 0.04em;
       line-height: 1.7;
+
       opacity: 0;
       transition: opacity 0.5s ease;
+
       pointer-events: none;
     }
 
@@ -88,19 +171,23 @@
       bottom: 30%;
       left: 50%;
       transform: translateX(-50%);
+
       font-family: 'Cinzel', serif;
       font-size: 0.65rem;
       letter-spacing: 0.5em;
       text-transform: uppercase;
-      color: rgba(200, 150, 12, 0.6);
+
+      color: rgba(200,150,12,0.6);
+
       opacity: 0;
       pointer-events: none;
+
       transition: opacity 0.5s ease;
     }
 
     @keyframes clausePromptBreathe {
-      0%, 100% { opacity: 0.3; }
-      50%       { opacity: 0.8; }
+      0%,100% { opacity: 0.3; }
+      50%     { opacity: 0.8; }
     }
 
     #click-prompt.breathing {
@@ -110,960 +197,429 @@
   </style>
 
   <script type="importmap">
-    {
-      "imports": {
-        "three":         "https://cdn.jsdelivr.net/npm/three@0.148.0/build/three.module.js",
-        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.148.0/examples/jsm/"
-      }
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.148.0/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.148.0/examples/jsm/"
     }
+  }
   </script>
 </head>
+
 <body>
+
+<!-- ENTER SCREEN -->
+<div id="enter-screen">
+  <div id="enter-content">
+    <div id="enter-title">Echoes of Giselle</div>
+    <div id="enter-subtitle">click to enter</div>
+  </div>
+</div>
 
 <div id="ui"></div>
 
-<audio id="intro-music" src="testing/assets/intro-music.mp3" loop preload="auto"></audio>
+<audio
+  id="intro-music"
+  src="testing/assets/intro-music.mp3"
+  loop
+  preload="auto">
+</audio>
 
 <script type="module">
-  import * as THREE from 'three';
+import * as THREE from 'three';
 
-  /* ── Intro music — starts on first click, fades out on exit ──────── */
-  const _introMusic = document.getElementById('intro-music');
-  _introMusic.volume = 0;
-  let _musicStarted = false;
+/* ───────────────── MUSIC ───────────────── */
 
-  function _startMusic() {
-    if (_musicStarted) return;
-    _musicStarted = true;
-    _introMusic.play().catch(() => {});
-    // Fade in over 2s
-    let v = 0;
-    const fadeIn = setInterval(() => {
-      v = Math.min(0.3, v + 0.015);
-      _introMusic.volume = v;
-      if (v >= 0.3) clearInterval(fadeIn);
-    }, 100);
+const _introMusic = document.getElementById('intro-music');
+
+_introMusic.volume = 0;
+
+let _musicStarted = false;
+
+async function _startMusic() {
+  if (_musicStarted) return;
+
+  _musicStarted = true;
+
+  try {
+    await _introMusic.play();
+  } catch (err) {
+    console.log('Autoplay blocked');
   }
 
-  function _stopMusic() {
-    // Fade out over 1.5s
-    const fadeOut = setInterval(() => {
-      _introMusic.volume = Math.max(0, _introMusic.volume - 0.067);
-      if (_introMusic.volume <= 0) { _introMusic.pause(); clearInterval(fadeOut); }
-    }, 100);
-  }
+  let v = 0;
 
-  // Start on first user interaction
-  document.addEventListener('click', _startMusic, { once: true });
+  const fadeIn = setInterval(() => {
+    v = Math.min(0.3, v + 0.015);
 
-  /* ── Debug ─────────────────────────────────────────────────────── */
-  const DEBUG_START_PAGE = 0;
+    _introMusic.volume = v;
 
-  /* ── Renderer — single, persistent ─────────────────────────────── */
-  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-  renderer.setPixelRatio(window.devicePixelRatio);
-  renderer.setSize(window.innerWidth, window.innerHeight);
-  renderer.autoClear = false;
-  document.body.appendChild(renderer.domElement);
+    if (v >= 0.3) clearInterval(fadeIn);
+  }, 100);
+}
 
-  window.addEventListener('resize', () => {
-    renderer.setSize(window.innerWidth, window.innerHeight);
+function _stopMusic() {
+  const fadeOut = setInterval(() => {
+    _introMusic.volume = Math.max(
+      0,
+      _introMusic.volume - 0.067
+    );
 
-    if (currentCamera) {
-      currentCamera.aspect = window.innerWidth / window.innerHeight;
-      currentCamera.updateProjectionMatrix();
+    if (_introMusic.volume <= 0) {
+      _introMusic.pause();
+      clearInterval(fadeOut);
     }
+  }, 100);
+}
 
-    curtainCamera.left   = -window.innerWidth  / 2;
-    curtainCamera.right  =  window.innerWidth  / 2;
-    curtainCamera.top    =  window.innerHeight / 2;
-    curtainCamera.bottom = -window.innerHeight / 2;
-    curtainCamera.updateProjectionMatrix();
-    _scaleCurtains();
+/* ───────────────── ENTER SCREEN ───────────────── */
+
+const enterScreen = document.getElementById('enter-screen');
+
+enterScreen.addEventListener('click', async () => {
+
+  await _startMusic();
+
+  enterScreen.classList.add('hidden');
+
+  setTimeout(() => {
+    enterScreen.remove();
+  }, 1200);
+
+}, { once: true });
+
+/* ───────────────── DEBUG ───────────────── */
+
+const DEBUG_START_PAGE = 0;
+
+/* ───────────────── RENDERER ───────────────── */
+
+const renderer = new THREE.WebGLRenderer({
+  antialias: true,
+  alpha: true
+});
+
+renderer.setPixelRatio(window.devicePixelRatio);
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.autoClear = false;
+
+document.body.appendChild(renderer.domElement);
+
+/* ───────────────── SCENE / CAMERA ───────────────── */
+
+let currentScene = new THREE.Scene();
+
+let currentCamera = new THREE.PerspectiveCamera(
+  45,
+  window.innerWidth / window.innerHeight,
+  0.1,
+  1000
+);
+
+/* ───────────────── CLOCK ───────────────── */
+
+const _clock = new THREE.Clock();
+
+/* ───────────────── PAGE SYSTEM ───────────────── */
+
+let currentPage = 0;
+let transitioning = false;
+
+let _pageUpdate = null;
+let _pageExit = null;
+
+/* ───────────────── EASING ───────────────── */
+
+function easeOutCubic(x) {
+  return 1 - Math.pow(1 - x, 3);
+}
+
+/* ───────────────── CLAUSE SYSTEM ───────────────── */
+
+let _clausesDone = false;
+
+const clauseTimeouts = [];
+
+function splitClauses(text) {
+  return text
+    .split(/(?<=[.!?,;:—])/)
+    .map(s => s.trim())
+    .filter(Boolean);
+}
+
+function playClause(clauses, index, onComplete) {
+
+  if (index >= clauses.length) {
+    onComplete();
+    return;
+  }
+
+  const clauseEl = document.getElementById('clause-text');
+
+  if (!clauseEl) return;
+
+  clauseEl.textContent = clauses[index];
+  clauseEl.style.opacity = '1';
+
+  const t1 = setTimeout(() => {
+
+    clauseEl.style.opacity = '0';
+
+    const t2 = setTimeout(() => {
+      playClause(clauses, index + 1, onComplete);
+    }, 500);
+
+    clauseTimeouts.push(t2);
+
+  }, 2500);
+
+  clauseTimeouts.push(t1);
+}
+
+function startClausePlayback(bodyText) {
+
+  _clausesDone = false;
+
+  clauseTimeouts.length = 0;
+
+  const clauses = splitClauses(bodyText);
+
+  playClause(clauses, 0, () => {
+
+    _clausesDone = true;
+
+    const promptEl =
+      document.getElementById('click-prompt');
+
+    if (promptEl) {
+      promptEl.classList.add('breathing');
+    }
   });
+}
 
-  /* ── Swappable scene + camera ───────────────────────────────────── */
-  let currentScene  = new THREE.Scene();
-  let currentCamera = new THREE.PerspectiveCamera(
+function cancelClausePlayback() {
+
+  for (const id of clauseTimeouts) {
+    clearTimeout(id);
+  }
+
+  clauseTimeouts.length = 0;
+
+  _clausesDone = false;
+
+  const clauseEl =
+    document.getElementById('clause-text');
+
+  const promptEl =
+    document.getElementById('click-prompt');
+
+  if (clauseEl) {
+    clauseEl.style.opacity = '0';
+  }
+
+  if (promptEl) {
+    promptEl.classList.remove('breathing');
+    promptEl.style.opacity = '0';
+  }
+}
+
+/* ───────────────── CLICK ADVANCE ───────────────── */
+
+renderer.domElement.addEventListener('click', () => {
+
+  if (!transitioning && _clausesDone) {
+    goToPage(currentPage + 1);
+  }
+
+});
+
+/* ───────────────── PAGE 0 (example minimal) ───────────────── */
+
+function initPage0() {
+
+  const scene = new THREE.Scene();
+  scene.background = new THREE.Color('#03010a');
+
+  currentScene = scene;
+
+  const camera = new THREE.PerspectiveCamera(
     45,
     window.innerWidth / window.innerHeight,
     0.1,
-    1000
+    100
   );
 
-  /* ── Curtain system (stub) ──────────────────────────────────────── */
-  const curtainScene = new THREE.Scene();
+  camera.position.z = 3;
 
-  const curtainCamera = new THREE.OrthographicCamera(
-    -window.innerWidth  / 2,
-     window.innerWidth  / 2,
-     window.innerHeight / 2,
-    -window.innerHeight / 2,
-    0.1, 10
+  currentCamera = camera;
+
+  const ambient = new THREE.AmbientLight(0xffffff, 0.5);
+
+  scene.add(ambient);
+
+  const geometry =
+    new THREE.TetrahedronGeometry(0.6);
+
+  const material =
+    new THREE.MeshStandardMaterial({
+      color: 0x6b1212,
+      metalness: 0.5,
+      roughness: 0.3
+    });
+
+  const mesh = new THREE.Mesh(geometry, material);
+
+  scene.add(mesh);
+
+  const ui = document.getElementById('ui');
+
+  ui.innerHTML = `
+    <div style="
+      position:absolute;
+      bottom:12%;
+      left:50%;
+      transform:translateX(-50%);
+      text-align:center;
+      width:80%;
+      max-width:640px;
+    ">
+      <div class="fade-up visible" style="
+        font-family:'Cinzel',serif;
+        font-size:0.75rem;
+        letter-spacing:0.4em;
+        color:var(--gold);
+        text-transform:uppercase;
+        margin-bottom:0.8rem;
+      ">
+        ACT I
+      </div>
+
+      <div class="fade-up visible" style="
+        font-family:'Cinzel',serif;
+        font-size:2.4rem;
+        letter-spacing:0.08em;
+        color:var(--gold-pale);
+        margin-bottom:1.2rem;
+      ">
+        A Love Betrayed
+      </div>
+    </div>
+
+    <div id="clause-text"></div>
+
+    <div id="click-prompt">
+      click to continue
+    </div>
+  `;
+
+  setTimeout(() => {
+
+    startClausePlayback(`
+      Giselle was a peasant girl who fell in love
+      with Albrecht — a nobleman disguised as one
+      of her own.
+    `);
+
+  }, 1200);
+
+  _pageUpdate = () => {
+    mesh.rotation.y += 0.005;
+  };
+
+  _pageExit = (onComplete) => {
+
+    cancelClausePlayback();
+
+    geometry.dispose();
+    material.dispose();
+
+    ui.innerHTML = '';
+
+    onComplete();
+  };
+}
+
+/* ───────────────── PAGE MANAGER ───────────────── */
+
+function goToPage(n) {
+
+  if (transitioning) return;
+
+  const doEnter = () => {
+
+    currentPage = n;
+
+    transitioning = false;
+
+    if (n === 0) {
+      initPage0();
+    }
+
+    else if (n === 1) {
+
+      transitioning = true;
+
+      _stopMusic();
+
+      setTimeout(() => {
+        window.location.href = 'musicbox.html';
+      }, 1500);
+    }
+  };
+
+  if (_pageExit) {
+
+    transitioning = true;
+
+    _pageExit(doEnter);
+
+  } else {
+
+    doEnter();
+  }
+}
+
+/* ───────────────── RESIZE ───────────────── */
+
+window.addEventListener('resize', () => {
+
+  renderer.setSize(
+    window.innerWidth,
+    window.innerHeight
   );
-  curtainCamera.position.z = 1;
 
-  const _curtainVert = /* glsl */`
-    uniform float uTime;
-    uniform float uFold;
-    varying vec2  vUv;
+  currentCamera.aspect =
+    window.innerWidth / window.innerHeight;
 
-    void main() {
-      vUv = uv;
-      vec3 pos = position;
-      float wave = sin(pos.x * 3.0 + uTime * 1.5) * 0.08
-                 + sin(pos.y * 2.0 + uTime * 1.2) * 0.05;
-      pos.z += wave * (1.0 - uFold);
-      gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
-    }
-  `;
+  currentCamera.updateProjectionMatrix();
+});
 
-  const _curtainFrag = /* glsl */`
-    uniform sampler2D uTexture;
-    varying vec2 vUv;
+/* ───────────────── ANIMATE ───────────────── */
 
-    void main() {
-      gl_FragColor = texture2D(uTexture, vUv);
-    }
-  `;
+function animate() {
 
-  const _curtainTex = new THREE.TextureLoader().load('testing/assets/curtain.jpg');
+  requestAnimationFrame(animate);
 
-  function _makeCurtainPanel() {
-    const geo = new THREE.PlaneGeometry(1, 2, 80, 80);
-    const mat = new THREE.ShaderMaterial({
-      uniforms: {
-        uTime:    { value: 0 },
-        uFold:    { value: 0 },
-        uTexture: { value: _curtainTex },
-      },
-      vertexShader:   _curtainVert,
-      fragmentShader: _curtainFrag,
-      side: THREE.DoubleSide,
-      transparent: true,
-    });
-    const mesh = new THREE.Mesh(geo, mat);
-    curtainScene.add(mesh);
-    return mesh;
+  const t = _clock.getElapsedTime();
+
+  if (_pageUpdate) {
+    _pageUpdate(t);
   }
 
-  const curtainLeft  = _makeCurtainPanel();
-  const curtainRight = _makeCurtainPanel();
+  renderer.clear();
 
-  function _scaleCurtains() {
-    const hw = window.innerWidth  / 2;
-    const h  = window.innerHeight;
-    curtainLeft.scale.set(hw, h, 1);
-    curtainLeft.position.set(-hw / 2, 0, 0);
-    curtainRight.scale.set(hw, h, 1);
-    curtainRight.position.set(hw / 2, 0, 0);
-  }
-  _scaleCurtains();
+  renderer.render(
+    currentScene,
+    currentCamera
+  );
+}
 
-  /* ── Page-slot hooks (filled by each page's init) ──────────────── */
-  let _pageUpdate = null; // (t: number) => void   — called every frame
-  let _pageExit   = null; // (onComplete: fn) => void — called on advance
+/* ───────────────── BOOT ───────────────── */
 
-  /* ── Shared easing ──────────────────────────────────────────────── */
-  function easeOutCubic(x) { return 1 - Math.pow(1 - x, 3); }
-  function easeOutBack(x)  {
-    const c1 = 1.70158, c3 = c1 + 1;
-    return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2);
-  }
-  function easeInOutSine(x) { return -(Math.cos(Math.PI * x) - 1) / 2; }
+goToPage(DEBUG_START_PAGE);
 
-  /* ── Page manager ───────────────────────────────────────────────── */
-  let currentPage   = 0;
-  let transitioning = false;
+animate();
 
-  function goToPage(n) {
-    if (transitioning) return;
-    console.log(`going to page ${n}`);
-
-    const doEnter = () => {
-      currentPage   = n;
-      transitioning = false;
-      if      (n === 0) initPage0();
-      else if (n === 1) initPage1();
-      else if (n === 2) initPage2();
-      else if (n === 3) {
-        // Curtain sweeps in, then redirect — no sweep-back
-        transitioning = true;
-        const WIPE = 1.2;
-        const w2 = window.innerWidth, h2 = window.innerHeight;
-        curtainLeft.scale.set(w2, h2, 1);
-        curtainLeft.position.set(-w2, 0, 0);
-        curtainLeft.material.uniforms.uFold.value = 0;
-        curtainRight.position.set(3 * w2, 0, 0);
-        const ws = _clock.getElapsedTime();
-        _pageUpdate = (t) => {
-          const prog  = Math.min((t - ws) / WIPE, 1);
-          const eased = easeOutCubic(prog);
-          curtainLeft.position.x = -w2 + eased * w2;
-          curtainLeft.material.uniforms.uFold.value = eased;
-          if (prog >= 1) { _pageUpdate = null; _stopMusic(); window.location.href = 'musicbox.html'; }
-        };
-      }
-    };
-
-    if (_pageExit) {
-      _pageExit(doEnter); // exit handler owns transitioning = true
-    } else {
-      doEnter();
-    }
-  }
-
-  renderer.domElement.addEventListener('click', () => {
-    if (!transitioning && _clausesDone) goToPage(currentPage + 1);
-  });
-
-  // ── Clause playback system ────────────────────────────────────────────────
-  let _clausesDone = false;
-  const clauseTimeouts = [];
-
-  function splitClauses(text) {
-    return text
-      .split(/(?<=[.!?,;:—])/)
-      .map(s => s.trim())
-      .filter(Boolean);
-  }
-
-  function playClause(clauses, index, onComplete) {
-    if (index >= clauses.length) { onComplete(); return; }
-    const clauseEl = document.getElementById('clause-text');
-    if (!clauseEl) return;
-    clauseEl.textContent = clauses[index];
-    clauseEl.style.opacity = '1';
-    const t1 = setTimeout(() => {
-      clauseEl.style.opacity = '0';
-      const t2 = setTimeout(() => {
-        playClause(clauses, index + 1, onComplete);
-      }, 500);
-      clauseTimeouts.push(t2);
-    }, 2500);
-    clauseTimeouts.push(t1);
-  }
-
-  function startClausePlayback(bodyText) {
-    _clausesDone = false;
-    clauseTimeouts.length = 0;
-    const clauses = splitClauses(bodyText);
-    playClause(clauses, 0, () => {
-      _clausesDone = true;
-      const promptEl = document.getElementById('click-prompt');
-      if (promptEl) promptEl.classList.add('breathing');
-    });
-  }
-
-  function cancelClausePlayback() {
-    for (const id of clauseTimeouts) clearTimeout(id);
-    clauseTimeouts.length = 0;
-    _clausesDone = false;
-    const clauseEl  = document.getElementById('clause-text');
-    const promptEl  = document.getElementById('click-prompt');
-    if (clauseEl) clauseEl.style.opacity = '0';
-    if (promptEl) { promptEl.classList.remove('breathing'); promptEl.style.opacity = '0'; }
-  }
-
-  /* ── Animate loop ───────────────────────────────────────────────── */
-  const _clock = new THREE.Clock();
-
-  /* ── Page 0 — A Love Betrayed ──────────────────────────────────── */
-  function initPage0() {
-    const CURTAIN_OPEN_DURATION = 1.8;
-
-    // Scene
-    const scene = new THREE.Scene();
-    scene.background = new THREE.Color('#03010a');
-    currentScene = scene;
-
-    const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100);
-    camera.position.z = 3;
-    currentCamera = camera;
-
-    const ambient = new THREE.AmbientLight(0xffffff, 0.3);
-    scene.add(ambient);
-    const pointLight = new THREE.PointLight(0xff4444, 2, 10);
-    pointLight.position.set(2, 2, 2);
-    scene.add(pointLight);
-
-    // Petals
-    function createPetalShape() {
-      const shape = new THREE.Shape();
-      shape.moveTo(0, 0);
-      shape.bezierCurveTo( 0.02, 0.05,  0.06, 0.08,  0, 0.12);
-      shape.bezierCurveTo(-0.06, 0.08, -0.02, 0.05,  0, 0);
-      return new THREE.ShapeGeometry(shape);
-    }
-    const petalGeo = createPetalShape();
-    const petalColors = [0x8B0000, 0x6b0000, 0xa00000];
-    const petals = [];
-    for (let i = 0; i < 50; i++) {
-      const mat = new THREE.MeshBasicMaterial({
-        color:       petalColors[Math.floor(Math.random() * petalColors.length)],
-        transparent: true,
-        opacity:     0.5 + Math.random() * 0.35,
-        side:        THREE.DoubleSide,
-      });
-      const mesh = new THREE.Mesh(petalGeo, mat);
-      mesh.userData.seed     = Math.random() * Math.PI * 2;
-      mesh.userData.speed    = 0.004 + Math.random() * 0.006;
-      mesh.userData.rotSpeed = {
-        x: (Math.random() - 0.5) * 0.04,
-        y: (Math.random() - 0.5) * 0.04,
-        z: (Math.random() - 0.5) * 0.15,
-      };
-      mesh.position.set(
-        (Math.random() - 0.5) * 4,
-        2 + Math.random() * 4,
-        (Math.random() - 0.5) * 1,
-      );
-      scene.add(mesh);
-      petals.push(mesh);
-    }
-
-    // Albrecht
-    const albGeo = new THREE.TetrahedronGeometry(0.35);
-    const albMat = new THREE.MeshStandardMaterial({ color: 0x6b1212, metalness: 0.6, roughness: 0.3 });
-    const albrecht = new THREE.Mesh(albGeo, albMat);
-    albrecht.position.set(4, 0, 0);
-    scene.add(albrecht);
-
-    const flyInStart    = _clock.getElapsedTime();
-    const flyInDuration = 1.2;
-    let albFlownIn = false;
-
-    // UI
-    const ui = document.getElementById('ui');
-    ui.innerHTML = `
-      <div id="p0-ui" style="
-        position:absolute; bottom:12%; left:50%; transform:translateX(-50%);
-        text-align:center; width:80%; max-width:640px;">
-        <div id="p0-eyebrow" class="fade-up" style="
-          font-family:'Cinzel',serif; font-size:0.75rem; letter-spacing:0.4em;
-          color:var(--gold); text-transform:uppercase; margin-bottom:0.8rem;">ACT I</div>
-        <div id="p0-title" class="fade-up" style="
-          font-family:'Cinzel',serif; font-size:2.4rem; letter-spacing:0.08em;
-          color:var(--gold-pale); margin-bottom:1.2rem;">A Love Betrayed</div>
-      </div>
-      <div id="clause-text"></div>
-      <div id="click-prompt">click to continue</div>`;
-
-    // Curtains — start closed (panels swapped to center)
-    const hw = window.innerWidth / 2;
-    curtainLeft.position.x  =  hw / 2;
-    curtainRight.position.x = -hw / 2;
-    curtainLeft.material.uniforms.uFold.value  = 0;
-    curtainRight.material.uniforms.uFold.value = 0;
-
-    const curtainOpenStart = _clock.getElapsedTime();
-    let curtainsOpened = false;
-
-    // Shatter state
-    const shatterFragments = [];
-    let shattering   = false;
-    let shatterStart = 0;
-
-    let prevT = _clock.getElapsedTime();
-
-    // Per-frame update
-    _pageUpdate = (t) => {
-      const dt = t - prevT;
-      prevT = t;
-
-      // Curtain open
-      if (!curtainsOpened) {
-        const prog  = Math.min((t - curtainOpenStart) / CURTAIN_OPEN_DURATION, 1);
-        const eased = easeOutCubic(prog);
-        curtainLeft.position.x  =  hw / 2 - eased * hw;
-        curtainRight.position.x = -hw / 2 + eased * hw;
-        curtainLeft.material.uniforms.uFold.value  = eased;
-        curtainRight.material.uniforms.uFold.value = eased;
-        if (prog >= 1) {
-          curtainsOpened = true;
-          setTimeout(() => document.getElementById('p0-eyebrow')?.classList.add('visible'), 600);
-          setTimeout(() => document.getElementById('p0-title')?.classList.add('visible'),   750);
-          setTimeout(() => startClausePlayback(`Giselle was a peasant girl who fell in love with Albrecht — a nobleman disguised as one of her own. When his deception was revealed and his engagement to another exposed, Giselle's heart shattered. She died where she stood.`), 900);
-        }
-      }
-
-      // Albrecht fly-in
-      if (!albFlownIn) {
-        const prog = Math.min((t - flyInStart) / flyInDuration, 1);
-        albrecht.position.x = 4 - easeOutCubic(prog) * 4;
-        if (prog >= 1) albFlownIn = true;
-      }
-      albrecht.rotation.y += 0.005;
-
-      // Petals
-      for (const p of petals) {
-        p.position.y -= p.userData.speed;
-        p.position.x += Math.sin(t * p.userData.speed + p.userData.seed) * 0.008;
-        p.rotation.x += p.userData.rotSpeed.x;
-        p.rotation.y += p.userData.rotSpeed.y;
-        p.rotation.z += p.userData.rotSpeed.z;
-        if (p.position.y < -2) {
-          p.position.y = 2;
-          p.position.x = (Math.random() - 0.5) * 4;
-        }
-      }
-
-      // Shatter fragments
-      if (shattering) {
-        const prog = Math.min((t - shatterStart) / 0.8, 1);
-        for (const frag of shatterFragments) {
-          frag.mesh.position.addScaledVector(frag.vel, dt);
-          frag.mesh.rotation.x += frag.rot.x * dt;
-          frag.mesh.rotation.y += frag.rot.y * dt;
-          frag.mesh.rotation.z += frag.rot.z * dt;
-          frag.mesh.material.opacity = 1 - prog;
-        }
-      }
-    };
-
-    // Exit handler — shatter then hand off
-    _pageExit = (onComplete) => {
-      if (shattering) return;
-      shattering   = true;
-      shatterStart = _clock.getElapsedTime();
-      transitioning = true;
-
-      // Fade text out 0.4s before shatter completes
-      cancelClausePlayback();
-      setTimeout(() => {
-        document.getElementById('p0-eyebrow')?.classList.remove('visible');
-        document.getElementById('p0-title')?.classList.remove('visible');
-      }, 400);
-
-      // Spawn 12 fragments
-      albrecht.visible = false;
-      for (let i = 0; i < 12; i++) {
-        const fGeo  = new THREE.TetrahedronGeometry(0.06 + Math.random() * 0.12);
-        const fMat  = new THREE.MeshStandardMaterial({
-          color: 0x6b1212, metalness: 0.6, roughness: 0.3, transparent: true, opacity: 1,
-        });
-        const fMesh = new THREE.Mesh(fGeo, fMat);
-        fMesh.position.copy(albrecht.position);
-        scene.add(fMesh);
-        shatterFragments.push({
-          mesh: fMesh,
-          vel:  new THREE.Vector3((Math.random()-0.5)*4, (Math.random()-0.5)*4, (Math.random()-0.5)*2),
-          rot:  { x: (Math.random()-0.5)*6, y: (Math.random()-0.5)*6, z: (Math.random()-0.5)*6 },
-        });
-      }
-
-      setTimeout(() => { cleanup(); onComplete(); }, 800);
-    };
-
-    function cleanup() {
-      _pageUpdate = null;
-      _pageExit   = null;
-      scene.remove(albrecht);
-      albGeo.dispose(); albMat.dispose();
-      for (const p of petals) scene.remove(p);
-      petalGeo.dispose();
-      for (const f of shatterFragments) {
-        scene.remove(f.mesh);
-        f.mesh.geometry.dispose();
-        f.mesh.material.dispose();
-      }
-      ui.innerHTML = '';
-    }
-  }
-
-  /* ── Page 1 — Giselle ──────────────────────────────────────────── */
-  function initPage1() {
-    const CURTAIN_WIPE_DURATION = 1.2;
-    const CURTAIN_PAUSE         = 0.4;
-
-    // Scene
-    const scene = new THREE.Scene();
-    scene.background = new THREE.Color('#03010a');
-    currentScene = scene;
-
-    const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100);
-    camera.position.z = 3;
-    currentCamera = camera;
-
-    const ambient = new THREE.AmbientLight('#1a1020', 0.4);
-    scene.add(ambient);
-
-    // Directional lights for shard depth
-    const keyLight = new THREE.DirectionalLight('#fff5e0', 1.8);
-    keyLight.position.set(2, 3, 2);
-    scene.add(keyLight);
-
-    const fillLight = new THREE.DirectionalLight('#8899cc', 0.5);
-    fillLight.position.set(-2, -1, -1);
-    scene.add(fillLight);
-
-    // 80 floating white-gold particles
-    const particleGeo = new THREE.SphereGeometry(0.008, 6, 6);
-    const particles = [];
-    const goldColor  = new THREE.Color(0xe8d5a0);
-    const whiteColor = new THREE.Color(0xffffff);
-    for (let i = 0; i < 80; i++) {
-      const mat = new THREE.MeshBasicMaterial({
-        color:       new THREE.Color().lerpColors(goldColor, whiteColor, Math.random()),
-        transparent: true,
-        opacity:     0.4 + Math.random() * 0.5,
-      });
-      const mesh = new THREE.Mesh(particleGeo, mat);
-      const theta = Math.random() * Math.PI * 2;
-      const phi   = Math.acos(2 * Math.random() - 1);
-      const r     = Math.random() * 2;
-      mesh.position.set(
-        r * Math.sin(phi) * Math.cos(theta),
-        r * Math.sin(phi) * Math.sin(theta),
-        r * Math.cos(phi),
-      );
-      mesh.userData.seed = Math.random() * Math.PI * 2;
-      scene.add(mesh);
-      particles.push(mesh);
-    }
-
-    // 8 dancing shards — visible immediately, Lissajous paths
-    const shardGeo = new THREE.TetrahedronGeometry(0.08);
-    const shards   = [];
-    for (let i = 0; i < 8; i++) {
-      const mat = new THREE.MeshStandardMaterial({
-        color:             '#e8d5a0',
-        emissive:          '#c8a870',
-        emissiveIntensity: 0.6,
-        roughness:         0.3,
-        metalness:         0.2,
-        transparent:       true,
-        opacity:           1,
-      });
-      const mesh = new THREE.Mesh(shardGeo, mat);
-      mesh.scale.setScalar(0.8 + Math.random() * 0.5);
-      mesh.freqX   = 0.4 + Math.random() * 0.5;
-      mesh.freqY   = 0.3 + Math.random() * 0.6;
-      mesh.freqZ   = 0.2 + Math.random() * 0.3;
-      mesh.radiusX = 0.6 + Math.random() * 0.8;
-      mesh.radiusY = 0.4 + Math.random() * 0.6;
-      mesh.phase   = Math.random() * Math.PI * 2;
-      scene.add(mesh);
-      shards.push(mesh);
-    }
-
-    // UI
-    const ui = document.getElementById('ui');
-    ui.innerHTML = `
-      <div id="p1-ui" style="
-        position:absolute; bottom:12%; left:50%; transform:translateX(-50%);
-        text-align:center; width:80%; max-width:640px;">
-        <div id="p1-eyebrow" class="fade-up" style="
-          font-family:'Cinzel',serif; font-size:0.75rem; letter-spacing:0.4em;
-          color:var(--gold); text-transform:uppercase; margin-bottom:0.8rem;">ACT II</div>
-        <div id="p1-title" class="fade-up" style="
-          font-family:'Cinzel',serif; font-size:2.4rem; letter-spacing:0.08em;
-          color:var(--gold-pale); margin-bottom:1.2rem;">Giselle</div>
-      </div>
-      <div id="clause-text"></div>
-      <div id="click-prompt">click to continue</div>`;
-
-    // Curtain wipe setup
-    const w = window.innerWidth;
-    const h = window.innerHeight;
-    curtainLeft.scale.set(w, h, 1);
-    curtainLeft.position.set(-w, 0, 0);
-    curtainLeft.material.uniforms.uFold.value = 0;
-    curtainRight.scale.set(w, h, 1);
-    curtainRight.position.set(3 * w, 0, 0);
-
-    const wipeStart = _clock.getElapsedTime();
-    let wipePhase   = 'in';
-    let pauseStart  = 0;
-    let curtainDone = false;
-
-    // Exit state
-    let exiting      = false;
-    let exitStart    = 0;
-    let exitCallback = null;
-
-    let prevT = _clock.getElapsedTime();
-
-    _pageUpdate = (t) => {
-      const dt = t - prevT;
-      prevT = t;
-
-      // ── Curtain wipe ──────────────────────────────────────────────
-      if (!curtainDone) {
-        if (wipePhase === 'in') {
-          const prog  = Math.min((t - wipeStart) / CURTAIN_WIPE_DURATION, 1);
-          const eased = easeOutCubic(prog);
-          curtainLeft.position.x = -w + eased * w;
-          curtainLeft.material.uniforms.uFold.value = eased;
-          if (prog >= 1) { wipePhase = 'pause'; pauseStart = t; }
-
-        } else if (wipePhase === 'pause') {
-          if (t - pauseStart >= CURTAIN_PAUSE) wipePhase = 'out';
-
-        } else if (wipePhase === 'out') {
-          const elapsed = t - pauseStart - CURTAIN_PAUSE;
-          const prog    = Math.min(elapsed / CURTAIN_WIPE_DURATION, 1);
-          const eased   = easeOutCubic(prog);
-          curtainLeft.position.x = eased * w;
-          curtainLeft.material.uniforms.uFold.value = 1 - eased;
-          if (prog >= 1) {
-            curtainDone = true;
-            setTimeout(() => document.getElementById('p1-eyebrow')?.classList.add('visible'), 600);
-            setTimeout(() => document.getElementById('p1-title')?.classList.add('visible'),   750);
-            setTimeout(() => startClausePlayback(`Condemned to join the Willies — spirits of women who died of broken hearts — Giselle wanders the graveyard between worlds. Unlike the others, she retains her love. She alone has the power to protect.`), 900);
-          }
-        }
-      }
-
-      // ── Shard exit scatter ────────────────────────────────────────
-      if (exiting) {
-        const prog = Math.min((t - exitStart) / 0.6, 1);
-        let allFaded = true;
-        for (const shard of shards) {
-          shard.position.add(shard.exitVelocity.clone().multiplyScalar(dt));
-          shard.material.opacity = Math.max(0, 1 - prog);
-          if (shard.material.opacity > 0) allFaded = false;
-        }
-        if (allFaded && exitCallback) {
-          const cb = exitCallback;
-          exitCallback = null;
-          cleanup(); cb();
-        }
-        return;
-      }
-
-      // ── Shard Lissajous dance ─────────────────────────────────────
-      for (const shard of shards) {
-        shard.position.x = Math.sin(t * shard.freqX + shard.phase)       * shard.radiusX;
-        shard.position.y = Math.cos(t * shard.freqY + shard.phase * 1.3) * shard.radiusY;
-        shard.position.z = Math.sin(t * shard.freqZ + shard.phase * 0.7) * 0.3;
-        shard.rotation.x += 0.008 + shard.phase * 0.003;
-        shard.rotation.y += 0.012 + shard.phase * 0.002;
-        shard.rotation.z += 0.005 + shard.phase * 0.004;
-      }
-
-      // ── Particles drift ───────────────────────────────────────────
-      for (const p of particles) {
-        const s = p.userData.seed;
-        p.position.x += Math.sin(t * 0.4 + s) * 0.002;
-        p.position.y += Math.cos(t * 0.3 + s * 1.3) * 0.002;
-        p.position.z += Math.sin(t * 0.5 + s * 0.7) * 0.001;
-        const dist = p.position.length();
-        if (dist > 2.2) p.position.multiplyScalar((2.2 / dist) * 0.99);
-      }
-    };
-
-    // ── Exit handler ────────────────────────────────────────────────
-    _pageExit = (onComplete) => {
-      if (exiting) return;
-      exiting      = true;
-      exitStart    = _clock.getElapsedTime();
-      exitCallback = onComplete;
-      transitioning = true;
-
-      cancelClausePlayback();
-      setTimeout(() => {
-        document.getElementById('p1-eyebrow')?.classList.remove('visible');
-        document.getElementById('p1-title')?.classList.remove('visible');
-      }, 200);
-
-      // Assign exit velocities — fly outward from current position
-      for (const shard of shards) {
-        const dir = shard.position.clone().normalize();
-        shard.exitVelocity = dir.multiplyScalar(3.0 + Math.random() * 2.0);
-      }
-    };
-
-    function cleanup() {
-      _pageUpdate = null;
-      _pageExit   = null;
-      scene.remove(ambient);
-      scene.remove(keyLight);
-      scene.remove(fillLight);
-      for (const p of particles) scene.remove(p);
-      particleGeo.dispose();
-      for (const s of shards) { scene.remove(s); s.material.dispose(); }
-      shardGeo.dispose();
-      ui.innerHTML = '';
-    }
-  }
-
-  /* ── Page 2 — The Willies ──────────────────────────────────────── */
-  function initPage2() {
-    const CURTAIN_WIPE_DURATION = 1.2;
-    const CURTAIN_PAUSE         = 0.4;
-
-    const WILLY_COUNT        = 18;
-    const WILLY_SPEED_MIN    = 0.4;
-    const WILLY_SPEED_MAX    = 2.2;
-    const WILLY_TRAIL_LENGTH = 28;
-
-    // Scene
-    const scene = new THREE.Scene();
-    scene.background = new THREE.Color('#03010a');
-    currentScene = scene;
-
-    const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100);
-    camera.position.z = 3;
-    currentCamera = camera;
-
-    // Cold fog plane — static opacity, no pulse
-    const fogGeo = new THREE.PlaneGeometry(20, 8);
-    const fogMat = new THREE.MeshBasicMaterial({
-      color: 0xc8d8ff, transparent: true, opacity: 0.08, depthWrite: false,
-    });
-    const fogPlane = new THREE.Mesh(fogGeo, fogMat);
-    fogPlane.position.y = -1.2;
-    scene.add(fogPlane);
-
-    // ── 18 Willy particle trail system ───────────────────────────
-    const headGeo = new THREE.SphereGeometry(0.025, 8, 8);
-    const willies = [];
-
-    const headColor = new THREE.Color(0xc8d8ff);
-    const tailColor = new THREE.Color(0x8899ff);
-
-    for (let i = 0; i < WILLY_COUNT; i++) {
-      const speed = WILLY_SPEED_MIN + Math.random() * (WILLY_SPEED_MAX - WILLY_SPEED_MIN);
-      const phase = Math.random() * Math.PI * 2;
-
-      // Random initial position within bounds
-      const pos = new THREE.Vector3(
-        (Math.random() - 0.5) * 7,
-        (Math.random() - 0.5) * 4,
-        (Math.random() - 0.5) * 2,
-      );
-
-      // Random initial velocity direction, scaled to speed
-      const vel = new THREE.Vector3(
-        Math.random() - 0.5,
-        Math.random() - 0.5,
-        Math.random() - 0.5,
-      ).normalize().multiplyScalar(speed);
-
-      // Trail as ring buffer of Vector3s
-      const trail = [];
-      for (let j = 0; j < WILLY_TRAIL_LENGTH; j++) trail.push(pos.clone());
-
-      // Trail line geometry with vertex colors
-      const trailGeo = new THREE.BufferGeometry();
-      const positions = new Float32Array(WILLY_TRAIL_LENGTH * 3);
-      const colors    = new Float32Array(WILLY_TRAIL_LENGTH * 3);
-      trailGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-      trailGeo.setAttribute('color',    new THREE.BufferAttribute(colors,    3));
-      const trailMat  = new THREE.LineBasicMaterial({ vertexColors: true, transparent: true });
-      const trailLine = new THREE.Line(trailGeo, trailMat);
-      scene.add(trailLine);
-
-      // Head orb
-      const headMat  = new THREE.MeshBasicMaterial({ color: 0xe8f0ff, transparent: true, opacity: 0.9 });
-      const headMesh = new THREE.Mesh(headGeo, headMat);
-      scene.add(headMesh);
-
-      // Per-particle point light
-      const light = new THREE.PointLight(0x8899ff, 0.5, 1.2);
-      scene.add(light);
-
-      willies.push({ pos, vel, speed, phase, trail, trailGeo, trailMat, trailLine, headMesh, headMat, light, trailHead: 0 });
-    }
-
-    // UI
-    const ui = document.getElementById('ui');
-    ui.innerHTML = `
-      <div id="p2-ui" style="
-        position:absolute; bottom:12%; left:50%; transform:translateX(-50%);
-        text-align:center; width:80%; max-width:640px;">
-        <div id="p2-eyebrow" class="fade-up" style="
-          font-family:'Cinzel',serif; font-size:0.75rem; letter-spacing:0.4em;
-          color:var(--gold); text-transform:uppercase; margin-bottom:0.8rem;">The Willies</div>
-        <div id="p2-title" class="fade-up" style="
-          font-family:'Cinzel',serif; font-size:2.4rem; letter-spacing:0.08em;
-          color:var(--gold-pale); margin-bottom:1.2rem;">They Who Dance Forever</div>
-      </div>
-      <div id="clause-text"></div>
-      <div id="click-prompt">click to continue</div>`;
-
-    // Curtain wipe
-    const w = window.innerWidth;
-    const h = window.innerHeight;
-    curtainLeft.scale.set(w, h, 1);
-    curtainLeft.position.set(-w, 0, 0);
-    curtainLeft.material.uniforms.uFold.value = 0;
-    curtainRight.scale.set(w, h, 1);
-    curtainRight.position.set(3 * w, 0, 0);
-
-    const wipeStart = _clock.getElapsedTime();
-    let wipePhase   = 'in';
-    let pauseStart  = 0;
-    let curtainDone = false;
-
-    // Exit state
-    let exiting      = false;
-    let exitStart    = 0;
-    let exitCallback = null;
-
-    let prevT = _clock.getElapsedTime();
-
-    _pageUpdate = (t) => {
-      const dt = t - prevT;
-      prevT = t;
-
-      // ── Curtain wipe ──────────────────────────────────────────────
-      if (!curtainDone) {
-        if (wipePhase === 'in') {
-          const prog  = Math.min((t - wipeStart) / CURTAIN_WIPE_DURATION, 1);
-          const eased = easeOutCubic(prog);
-          curtainLeft.position.x = -w + eased * w;
-          curtainLeft.material.uniforms.uFold.value = eased;
-          if (prog >= 1) { wipePhase = 'pause'; pauseStart = t; }
-
-        } else if (wipePhase === 'pause') {
-          if (t - pauseStart >= CURTAIN_PAUSE) wipePhase = 'out';
-
-        } else if (wipePhase === 'out') {
-          const elapsed = t - pauseStart - CURTAIN_PAUSE;
-          const prog    = Math.min(elapsed / CURTAIN_WIPE_DURATION, 1);
-          const eased   = easeOutCubic(prog);
-          curtainLeft.position.x = eased * w;
-          curtainLeft.material.uniforms.uFold.value = 1 - eased;
-          if (prog >= 1) {
-            curtainDone = true;
-            setTimeout(() => document.getElementById('p2-eyebrow')?.classList.add('visible'), 600);
-            setTimeout(() => document.getElementById('p2-title')?.classList.add('visible'),   750);
-            setTimeout(() => startClausePlayback(`The Willies are the spirits of women betrayed before their wedding day — condemned to haunt the graveyard at midnight, forcing any man they encounter to dance until he dies. They are merciless. They are beautiful. They cannot stop.`), 900);
-          }
-        }
-      }
-
-      // ── Exit: rush toward camera then advance ─────────────────────
-      if (exiting) {
-        const fadeT = Math.min((t - exitStart) / 0.5, 1);
-        let allPast = true;
-        for (const w of willies) {
-          w.pos.z += 6 * dt;
-          w.headMesh.position.copy(w.pos);
-          w.light.position.copy(w.pos);
-          const alpha = Math.max(0, 1 - fadeT);
-          w.headMat.opacity = alpha * 0.9;
-          w.trailMat.opacity = alpha;
-          if (w.pos.z <= 4.0) allPast = false;
-        }
-        if (allPast && exitCallback) {
-          const cb = exitCallback;
-          exitCallback = null;
-          cleanup(); cb();
-        }
-        return;
-      }
-
-      // ── Particle movement + trail update ─────────────────────────
-      for (const willy of willies) {
-        const { pos, vel, phase } = willy;
-
-        // Organic steering
-        const steer = new THREE.Vector3(
-          Math.sin(t * 0.7 + phase),
-          Math.cos(t * 0.5 + phase * 1.3),
-          Math.sin(t * 0.3 + phase * 0.7),
-        ).multiplyScalar(0.6 * dt);
-        vel.add(steer).normalize().multiplyScalar(willy.speed);
-
-        // Move
-        pos.addScaledVector(vel, dt);
-
-        // Bounce off bounds
-        if (pos.x >  3.5) { pos.x =  3.5; vel.x = -Math.abs(vel.x); }
-        if (pos.x < -3.5) { pos.x = -3.5; vel.x =  Math.abs(vel.x); }
-        if (pos.y >  2.0) { pos.y =  2.0; vel.y = -Math.abs(vel.y); }
-        if (pos.y < -2.0) { pos.y = -2.0; vel.y =  Math.abs(vel.y); }
-        if (pos.z >  1.0) { pos.z =  1.0; vel.z = -Math.abs(vel.z); }
-        if (pos.z < -1.0) { pos.z = -1.0; vel.z =  Math.abs(vel.z); }
-        pos.y = Math.max(-1.8, Math.min(1.8, pos.y));
-
-        // Push latest position into trail ring buffer
-        willy.trail[willy.trailHead] = pos.clone();
-        willy.trailHead = (willy.trailHead + 1) % WILLY_TRAIL_LENGTH;
-
-        // Head orb + light
-        willy.headMesh.position.copy(pos);
-        willy.light.position.copy(pos);
-
-        // Update trail geometry — walk from head→tail in ring-buffer order
-        const posAttr   = willy.trailGeo.attributes.position;
-        const colorAttr = willy.trailGeo.attributes.color;
-        for (let j = 0; j < WILLY_TRAIL_LENGTH; j++) {
-          // j=0 is freshest (head), j=TRAIL_LENGTH-1 is oldest (tail)
-          const idx    = (willy.trailHead - 1 - j + WILLY_TRAIL_LENGTH) % WILLY_TRAIL_LENGTH;
-          const pt     = willy.trail[idx];
-          const frac   = j / (WILLY_TRAIL_LENGTH - 1);    // 0=head, 1=tail
-          const alpha  = 1 - frac;                         // fade to 0 at tail
-          const col    = new THREE.Color().lerpColors(headColor, tailColor, frac);
-          posAttr.setXYZ(j, pt.x, pt.y, pt.z);
-          colorAttr.setXYZ(j, col.r * alpha, col.g * alpha, col.b * alpha);
-        }
-        posAttr.needsUpdate   = true;
-        colorAttr.needsUpdate = true;
-      }
-    };
-
-    // ── Exit handler ────────────────────────────────────────────────
-    _pageExit = (onComplete) => {
-      if (exiting) return;
-      exiting      = true;
-      exitStart    = _clock.getElapsedTime();
-      exitCallback = onComplete;
-      transitioning = true;
-
-      cancelClausePlayback();
-      setTimeout(() => {
-        document.getElementById('p2-eyebrow')?.classList.remove('visible');
-        document.getElementById('p2-title')?.classList.remove('visible');
-      }, 400);
-
-      // Boost each particle toward camera
-      for (const willy of willies) {
-        willy.vel.set(0, 0, 1).multiplyScalar(willy.speed);
-      }
-    };
-
-    function cleanup() {
-      _pageUpdate = null;
-      _pageExit   = null;
-      scene.remove(fogPlane); fogGeo.dispose(); fogMat.dispose();
-      headGeo.dispose();
-      for (const willy of willies) {
-        scene.remove(willy.trailLine);
-        scene.remove(willy.headMesh);
-        scene.remove(willy.light);
-        willy.trailGeo.dispose();
-        willy.trailMat.dispose();
-        willy.headMat.dispose();
-      }
-      ui.innerHTML = '';
-    }
-  }
-
-
-
-  /* ── Animate loop ───────────────────────────────────────────────── */
-  function animate() {
-    requestAnimationFrame(animate);
-    const t = _clock.getElapsedTime();
-
-    if (_pageUpdate) _pageUpdate(t);
-
-    curtainLeft.material.uniforms.uTime.value  = t;
-    curtainRight.material.uniforms.uTime.value = t;
-
-    renderer.clear();
-    renderer.render(currentScene, currentCamera);
-    renderer.clearDepth();
-    renderer.render(curtainScene, curtainCamera);
-  }
-
-  /* ── Boot ───────────────────────────────────────────────────────── */
-  goToPage(DEBUG_START_PAGE);
-  animate();
 </script>
 
 </body>
