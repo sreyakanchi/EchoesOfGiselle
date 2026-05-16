@@ -1875,7 +1875,7 @@ function animate() {
       controls.enabled = true;
       const hint = document.getElementById('explore-hint');
       hint.style.opacity = '1';
-      setTimeout(() => { hint.style.opacity = '0'; }, 300000);
+      setTimeout(() => { hint.style.opacity = '0'; }, 4000);
       depletionActive = true;
       initAudio();
     }
